@@ -15,11 +15,11 @@ export class UserController extends BaseController implements IUserController {
         this.bindRoutes([{ path: '/login', method: 'post', func: this.login }]);
     }
 
-    login(req: Request, res: Response, next: NextFunction) {
+    login(req: Request, res: Response, next: NextFunction): void {
         //Emulation Error
         next(new HTTPError(401, 'Error of auth', 'login'));
     }
-    register(req: Request, res: Response, next: NextFunction) {
+    register(req: Request, res: Response, next: NextFunction): void {
         this.ok(res, 'register');
     }
 }

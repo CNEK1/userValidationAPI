@@ -11,6 +11,11 @@ import { IUserController } from './users /user.inteface';
 // const logger = new LoggerService();
 // const app = new App(logger, new UserController(logger), new ExceptionFilter(logger));
 
+export interface IBootstrapReturnType {
+    appContainer: Container;
+    app: App;
+}
+
 export const appBindings = new ContainerModule((bind: interfaces.Bind) => {
     bind<ILogger>(TYPES.ILogger).to(LoggerService);
     bind<IExceptionFilter>(TYPES.ExceptionFilter).to(ExceptionFilter);
@@ -18,7 +23,7 @@ export const appBindings = new ContainerModule((bind: interfaces.Bind) => {
     bind<App>(TYPES.Application).to(App);
 });
 
-const bootstrap = () => {
+const bootstrap = (): IBootstrapReturnType => {
     const appContainer = new Container();
     appContainer.load(appBindings);
     const app = appContainer.get<App>(TYPES.Application);
