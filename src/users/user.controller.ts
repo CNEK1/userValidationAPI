@@ -8,10 +8,11 @@ import 'reflect-metadata';
 import { IUserController } from './user.inteface';
 import { UserLoginDto } from './dot/user-login.dto';
 import { UserRegisterDto } from './dot/user-register.dto';
+import { UserSerice } from './user.service';
 
 @injectable()
 export class UserController extends BaseController implements IUserController {
-    constructor(@inject(TYPES.ILogger) private loggerSrc: ILogger) {
+    constructor(@inject(TYPES.ILogger) private loggerSrc: ILogger, @inject(TYPES.UserService) private UserService: UserSerice) {
         super(loggerSrc);
         this.bindRoutes([{ path: '/register', method: 'post', func: this.register }]);
         this.bindRoutes([{ path: '/login', method: 'post', func: this.login }]);
@@ -22,8 +23,12 @@ export class UserController extends BaseController implements IUserController {
         console.log(req.body);
         next(new HTTPError(401, 'Error of auth', 'login'));
     }
-    register(req: Request<{}, {}, UserRegisterDto>, res: Response, next: NextFunction): void {
-        console.log(req.body);
-        this.ok(res, 'register');
+    async register({ body }: Request<{}, {}, UserRegisterDto>, res: Response, next: NextFunction): Promise<void> {
+        const result = await this.UserService.createUser(body);
+        if (!result) {
+            return next(new HTTPError(422, 'This User is already Exist'));
+        }
+        console.log(body);
+        this.ok(res, { email: result.email, name: result.name });
     }
 }
