@@ -6,6 +6,8 @@ import { ILogger } from '../logger/logger.interface';
 import { TYPES } from '../types';
 import 'reflect-metadata';
 import { IUserController } from './user.inteface';
+import { UserLoginDto } from './dot/user-login.dto';
+import { UserRegisterDto } from './dot/user-register.dto';
 
 @injectable()
 export class UserController extends BaseController implements IUserController {
@@ -15,11 +17,13 @@ export class UserController extends BaseController implements IUserController {
         this.bindRoutes([{ path: '/login', method: 'post', func: this.login }]);
     }
 
-    login(req: Request, res: Response, next: NextFunction): void {
+    login(req: Request<{}, {}, UserLoginDto>, res: Response, next: NextFunction): void {
         //Emulation Error
+        console.log(req.body);
         next(new HTTPError(401, 'Error of auth', 'login'));
     }
-    register(req: Request, res: Response, next: NextFunction): void {
+    register(req: Request<{}, {}, UserRegisterDto>, res: Response, next: NextFunction): void {
+        console.log(req.body);
         this.ok(res, 'register');
     }
 }
