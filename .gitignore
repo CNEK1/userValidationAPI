@@ -2,3 +2,4 @@
 .prettierrc
 /.vscode
 /dist
+/.clinic

@@ -2,13 +2,16 @@
     "name": "dashboardapi",
     "version": "1.0.0",
     "description": "",
-    "main": "index.js",
+    "main": "./src/main.ts",
     "type": "commonjs",
     "scripts": {
         "start": "node ./dist/main.js",
+        "dev:inspect": "nodemon -e ts,json --exec node --inspect=localhost:9222 -r ts-node/register src/main.ts",
         "build": "tsc",
         "test": "echo \"Error: no test specified\" && exit 1",
-        "lint:fix": "eslint ./src/** --fix"
+        "dev": "nodemon",
+        "lint:fix": "eslint ./src/** --fix",
+        "clinic":"clinic doctor --on-port 'autocannon -n -d 10 POST localhost:8000/users/register' -- node dist/main.js"
     },
     "author": "Timur Kovalenko",
     "license": "ISC",
@@ -27,6 +30,7 @@
         "eslint-plugin-prettier": "^4.2.1",
         "nodemon": "^2.0.19",
         "prettier": "^2.7.1",
+        "ts-node": "^10.8.2",
         "typescript": "^4.7.4"
     }
 }
