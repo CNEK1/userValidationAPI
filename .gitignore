@@ -3,3 +3,5 @@
 /.vscode
 /dist
 /.clinic
+/.env
+/prisma/dev.db-journal

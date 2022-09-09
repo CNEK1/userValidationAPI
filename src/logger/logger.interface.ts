@@ -1,5 +1,3 @@
-import { Logger } from 'tslog';
-
 export interface ILogger {
     logger: unknown;
     log: (...args: unknown[]) => void;
