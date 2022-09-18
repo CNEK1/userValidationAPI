@@ -21,7 +21,7 @@ export class UserController extends BaseController implements IUserController {
 
     login(req: Request<{}, {}, UserLoginDto>, res: Response, next: NextFunction): void {
         //Emulation Error
-        console.log(req.body);
+        this.loggerSrc.log(req.body);
         next(new HTTPError(401, 'Error of auth', 'login'));
     }
     async register({ body }: Request<{}, {}, UserRegisterDto>, res: Response, next: NextFunction): Promise<void> {
@@ -29,7 +29,7 @@ export class UserController extends BaseController implements IUserController {
         if (!result) {
             return next(new HTTPError(422, 'This User is already Exist'));
         }
-        console.log(body);
+        this.loggerSrc.log(body);
         this.ok(res, { email: result.email, name: result.name });
     }
 }

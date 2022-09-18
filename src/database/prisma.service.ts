@@ -13,8 +13,14 @@ export class PrismaService implements IPrismaService {
     }
 
     async connect(): Promise<void> {
-        await this.client.$connect();
-        this.loggerService.log('Successfully connect to the DB');
+        try {
+            await this.client.$connect();
+            this.loggerService.log('Successfully connect to the DB');
+        } catch (error) {
+            if (error instanceof Error) {
+                this.loggerService.log('Cant connect to the DB');
+            }
+        }
     }
     async disconnect(): Promise<void> {
         await this.client.$disconnect();
