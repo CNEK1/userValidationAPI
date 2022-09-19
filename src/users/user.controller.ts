@@ -8,21 +8,26 @@ import 'reflect-metadata';
 import { IUserController } from './user.inteface';
 import { UserLoginDto } from './dot/user-login.dto';
 import { UserRegisterDto } from './dot/user-register.dto';
-import { UserSerice } from './user.service';
 import { ValidateMiddleware } from '../common/validate.middleware';
+import { sign } from 'jsonwebtoken';
+import { IConfigInterface } from '../config/config.service.interface';
+import { IUserService } from './user.service.interface';
 
 @injectable()
 export class UserController extends BaseController implements IUserController {
-    constructor(@inject(TYPES.ILogger) private loggerSrc: ILogger, @inject(TYPES.UserService) private UserService: UserSerice) {
+    constructor(@inject(TYPES.ILogger) private loggerSrc: ILogger, @inject(TYPES.UserService) private UserService: IUserService, @inject(TYPES.ConfigService) private configService: IConfigInterface) {
         super(loggerSrc);
         this.bindRoutes([{ path: '/register', method: 'post', func: this.register, middlewares: [new ValidateMiddleware(UserRegisterDto)] }]);
-        this.bindRoutes([{ path: '/login', method: 'post', func: this.login }]);
+        this.bindRoutes([{ path: '/login', method: 'post', func: this.login, middlewares: [new ValidateMiddleware(UserLoginDto)] }]);
     }
 
-    login(req: Request<{}, {}, UserLoginDto>, res: Response, next: NextFunction): void {
-        //Emulation Error
-        this.loggerSrc.log(req.body);
-        next(new HTTPError(401, 'Error of auth', 'login'));
+    async login(req: Request<{}, {}, UserLoginDto>, res: Response, next: NextFunction): Promise<void> {
+        const result = await this.UserService.validateUser(req.body);
+        if (!result) {
+            return next(new HTTPError(401, 'Error of auth', 'login'));
+        }
+        const jwt = await this.signJWT(req.body.email, this.configService.get('SECRET'));
+        this.ok(res, { message: 'Login Successfully', jwt: jwt });
     }
     async register({ body }: Request<{}, {}, UserRegisterDto>, res: Response, next: NextFunction): Promise<void> {
         const result = await this.UserService.createUser(body);
@@ -31,5 +36,25 @@ export class UserController extends BaseController implements IUserController {
         }
         this.loggerSrc.log(body);
         this.ok(res, { email: result.email, name: result.name });
+    }
+    private signJWT(email: string, secret: string): Promise<string> {
+        return new Promise<string>((resolve, reject) => {
+            sign(
+                {
+                    email,
+                    iat: Math.floor(Date.now() / 1000)
+                },
+                secret,
+                {
+                    algorithm: 'HS256'
+                },
+                (err, token) => {
+                    if (err) {
+                        reject(err);
+                    }
+                    resolve(token as string);
+                }
+            );
+        });
     }
 }

@@ -19,7 +19,12 @@ export class UserSerice implements IUserService {
         await newUser.setPassword(password, Number(salt));
         return this.usersRepository.create(newUser);
     }
-    async validateUser(dto: UserLoginDto): Promise<boolean> {
-        return true;
+    async validateUser({ email, password }: UserLoginDto): Promise<boolean> {
+        const existed = await this.usersRepository.find(email);
+        if (!existed) {
+            return false;
+        }
+        const newUser = new User(existed.email, existed.name, existed.password);
+        return newUser.comparePassword(password);
     }
 }
