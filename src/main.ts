@@ -23,9 +23,9 @@ export interface IBootstrapReturnType {
 
 export const appBindings = new ContainerModule((bind: interfaces.Bind) => {
     bind<ILogger>(TYPES.ILogger).to(LoggerService).inSingletonScope();
-    bind<IExceptionFilter>(TYPES.ExceptionFilter).to(ExceptionFilter).inSingletonScope();
-    bind<IUserController>(TYPES.UserController).to(UserController).inSingletonScope();
-    bind<IUserService>(TYPES.UserService).to(UserSerice).inSingletonScope();
+    bind<IExceptionFilter>(TYPES.ExceptionFilter).to(ExceptionFilter);
+    bind<IUserController>(TYPES.UserController).to(UserController);
+    bind<IUserService>(TYPES.UserService).to(UserSerice);
     bind<IConfigInterface>(TYPES.ConfigService).to(ConfigService).inSingletonScope();
     bind<IPrismaService>(TYPES.PrismaService).to(PrismaService).inSingletonScope();
     bind<IUsersRepository>(TYPES.UserRepository).to(UsersRepository).inSingletonScope();

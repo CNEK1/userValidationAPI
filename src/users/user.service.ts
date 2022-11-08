@@ -17,6 +17,10 @@ export class UserSerice implements IUserService {
         const newUser = new User(email, name);
         const salt = this.configService.get('SALT');
         await newUser.setPassword(password, Number(salt));
+        const existedUser = await this.usersRepository.find(email);
+        if (existedUser) {
+            return null;
+        }
         return this.usersRepository.create(newUser);
     }
     async validateUser({ email, password }: UserLoginDto): Promise<boolean> {

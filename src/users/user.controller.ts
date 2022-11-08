@@ -19,6 +19,7 @@ export class UserController extends BaseController implements IUserController {
         super(loggerSrc);
         this.bindRoutes([{ path: '/register', method: 'post', func: this.register, middlewares: [new ValidateMiddleware(UserRegisterDto)] }]);
         this.bindRoutes([{ path: '/login', method: 'post', func: this.login, middlewares: [new ValidateMiddleware(UserLoginDto)] }]);
+        this.bindRoutes([{ path: '/info', method: 'get', func: this.info, middlewares: [] }]);
     }
 
     async login(req: Request<{}, {}, UserLoginDto>, res: Response, next: NextFunction): Promise<void> {
@@ -37,6 +38,11 @@ export class UserController extends BaseController implements IUserController {
         this.loggerSrc.log(body);
         this.ok(res, { email: result.email, name: result.name });
     }
+
+    async info({ user }: Request<{}, {}, UserRegisterDto>, res: Response, next: NextFunction): Promise<void> {
+        this.ok(res, { email: user });
+    }
+
     private signJWT(email: string, secret: string): Promise<string> {
         return new Promise<string>((resolve, reject) => {
             sign(
