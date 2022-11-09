@@ -12,6 +12,7 @@ import { ValidateMiddleware } from '../common/validate.middleware';
 import { sign } from 'jsonwebtoken';
 import { IConfigInterface } from '../config/config.service.interface';
 import { IUserService } from './user.service.interface';
+import { GuardMiddleware } from '../common/guard.middleware';
 
 @injectable()
 export class UserController extends BaseController implements IUserController {
@@ -19,7 +20,7 @@ export class UserController extends BaseController implements IUserController {
         super(loggerSrc);
         this.bindRoutes([{ path: '/register', method: 'post', func: this.register, middlewares: [new ValidateMiddleware(UserRegisterDto)] }]);
         this.bindRoutes([{ path: '/login', method: 'post', func: this.login, middlewares: [new ValidateMiddleware(UserLoginDto)] }]);
-        this.bindRoutes([{ path: '/info', method: 'get', func: this.info, middlewares: [] }]);
+        this.bindRoutes([{ path: '/info', method: 'get', func: this.info, middlewares: [new GuardMiddleware()] }]);
     }
 
     async login(req: Request<{}, {}, UserLoginDto>, res: Response, next: NextFunction): Promise<void> {
@@ -40,7 +41,8 @@ export class UserController extends BaseController implements IUserController {
     }
 
     async info({ user }: Request<{}, {}, UserRegisterDto>, res: Response, next: NextFunction): Promise<void> {
-        this.ok(res, { email: user });
+        const userInfo = await this.UserService.getUserInfo(user);
+        this.ok(res, { email: userInfo?.email, id: userInfo?.id });
     }
 
     private signJWT(email: string, secret: string): Promise<string> {

@@ -31,4 +31,7 @@ export class UserSerice implements IUserService {
         const newUser = new User(existed.email, existed.name, existed.password);
         return newUser.comparePassword(password);
     }
+    async getUserInfo(email: string): Promise<UserModel | null> {
+        return this.usersRepository.find(email);
+    }
 }
