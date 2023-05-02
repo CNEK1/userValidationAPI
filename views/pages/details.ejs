@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Update User</title>
+    </head>
+    <style>
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+
+            color: var(--black);
+            background: #eceae4;
+
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        #form {
+            background-color: #f2f2f2;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.3);
+        }
+
+        #form h2 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+
+        #form label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        #form input[type='text'],
+        #form input[type='email'],
+        #form input[type='password'],
+        #form input[type='roles'] {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        #form button[type='submit'] {
+            background-color: #4caf50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.2s ease-in-out;
+        }
+
+        #form button[type='submit']:hover {
+            background-color: #3e8e41;
+        }
+    </style>
+    <body>
+        <main>
+            <div id="form">
+                <h1>User <%= user.id %></h1>
+                <form action="/detail/<%= user.id %>" method="get">
+                    <label for="name">Name: <%= user.name %></label>
+                    <label for="email">Email: <%= user.email %></label>
+                    <br />
+                    <label for="roles">Roles: <%= user.roles %></label>
+                    <label for="roles">Hashed Password: <%= user.password %></label>
+                    <br />
+                </form>
+            </div>
+        </main>
+    </body>
+</html>

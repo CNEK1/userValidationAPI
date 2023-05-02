@@ -13,8 +13,8 @@ import { UserModel } from '@prisma/client';
 export class UserSerice implements IUserService {
     constructor(@inject(TYPES.ConfigService) private configService: IConfigInterface, @inject(TYPES.UserRepository) private usersRepository: IUsersRepository) {}
 
-    async createUser({ email, name, password }: UserRegisterDto): Promise<UserModel | null> {
-        const newUser = new User(email, name);
+    async createUser({ email, name, password, roles }: UserRegisterDto): Promise<UserModel | null> {
+        const newUser = new User(email, name, roles);
         const salt = this.configService.get('SALT');
         await newUser.setPassword(password, Number(salt));
         const existedUser = await this.usersRepository.find(email);
@@ -24,14 +24,26 @@ export class UserSerice implements IUserService {
         return this.usersRepository.create(newUser);
     }
     async validateUser({ email, password }: UserLoginDto): Promise<boolean> {
-        const existed = await this.usersRepository.find(email);
-        if (!existed) {
+        const existedUser = await this.usersRepository.find(email);
+        if (!existedUser) {
             return false;
         }
-        const newUser = new User(existed.email, existed.name, existed.password);
+        const newUser = new User(existedUser.email, existedUser.name, existedUser.roles, existedUser.password);
         return newUser.comparePassword(password);
     }
+    async findUser(id: number): Promise<UserModel | null> {
+        return this.usersRepository.findOne(id);
+    }
     async getUserInfo(email: string): Promise<UserModel | null> {
-        return this.usersRepository.find(email);
+        return await this.usersRepository.find(email);
+    }
+    async getUsers(): Promise<Array<UserModel> | null> {
+        return await this.usersRepository.findAll();
+    }
+    async deleteUser(id: number): Promise<UserModel | null> {
+        return await this.usersRepository.delete(id);
+    }
+    async updateUser(id: number, name?: string, roles?: string): Promise<UserModel | null> {
+        return await this.usersRepository.update(id, name, roles);
     }
 }
